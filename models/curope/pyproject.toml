@@ -1,0 +1,18 @@
+[build-system]
+requires = [
+    "setuptools", 
+    "numpy",
+    "torch",
+    "torchvision"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "curope"
+version = "0.0.1"
+dynamic = []
+dependencies = [
+  "torch",
+  "torchvision",
+  "numpy",
+]

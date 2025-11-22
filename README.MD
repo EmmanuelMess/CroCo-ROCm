@@ -30,7 +30,7 @@ Some components for stereo matching and optical flow are based on code from [uni
 
 ## Preparation
 
-1. Install dependencies on a machine with a NVidia GPU using e.g. conda. Note that `habitat-sim` is required only for the interactive demo and the synthetic pre-training data generation. If you don't plan to use it, you can ignore the line installing it and use a more recent python version.
+1. Install dependencies on a machine with a NVidia GPU or AMD GPU using e.g. conda. Note that `habitat-sim` is required only for the interactive demo and the synthetic pre-training data generation. If you don't plan to use it, you can ignore the line installing it and use a more recent python version.
 
 ```bash
 conda create -n croco python=3.7 cmake=3.14.0
@@ -43,14 +43,48 @@ conda install scikit-learn tqdm quaternion opencv # only for pretraining / habit
 
 ```
 
+For venv:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Pytorch (see https://pytorch.org/)
+# CPU
+export TORCH_INDEX=https://download.pytorch.org/whl/cpu
+
+# ROCm (See https://pytorch.org/get-started/previous-versions/)
+export TORCH_INDEX=https://download.pytorch.org/whl/rocm6.2
+
+# CUDA 11.8
+export TORCH_INDEX=https://download.pytorch.org/whl/cu118
+# CUDA 12.1
+export TORCH_INDEX=https://download.pytorch.org/whl/cu121
+# CUDA 12.4
+export TORCH_INDEX=https://download.pytorch.org/whl/cu124
+
+python3 -m pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url ${TORCH_INDEX}
+```
+
 2. Compile cuda kernels for RoPE
 
 CroCo v2 relies on RoPE positional embeddings for which you need to compile some cuda kernels.
+
 ```bash
 cd models/curope/
 python setup.py build_ext --inplace
 cd ../../
 ```
+
+
+If you get an error regarding gfx1030 use:
+
+```
+cd models/curope/
+HSA_OVERRIDE_GFX_VERSION=10.3.0;python setup.py build_ext --inplace
+cd ../../
+```
+
 
 This can be a bit long as we compile for all cuda architectures, feel free to update L9 of `models/curope/setup.py` to compile for specific architectures only.
 You might also need to set the environment `CUDA_HOME` in case you use a custom cuda installation.
