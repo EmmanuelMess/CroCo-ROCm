@@ -73,18 +73,7 @@ And install other dependencies, if you want to run more than the demo.py
 CroCo v2 relies on RoPE positional embeddings for which you need to compile some cuda kernels.
 
 ```bash
-cd models/curope/
-python setup.py build_ext --inplace
-cd ../../
-```
-
-
-If you get an error regarding gfx1030 use:
-
-```
-cd models/curope/
-HSA_OVERRIDE_GFX_VERSION=10.3.0 python setup.py build_ext --inplace
-cd ../../
+python3 -m pip install ./models/curope/  --extra-index-url ${TORCH_INDEX}
 ```
 
 

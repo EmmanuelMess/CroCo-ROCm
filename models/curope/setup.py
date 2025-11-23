@@ -6,6 +6,7 @@ from torch import cuda, version
 from torch.utils.cpp_extension import BuildExtension, CUDAExtension
 
 if cuda.is_available() and version.cuda:
+    print("Run with NVIDIA GPU")
     # compile for all possible CUDA architectures
     all_cuda_archs = cuda.get_gencode_flags().replace('compute=','arch=').split()
     # alternatively, you can list cuda archs that you want, eg:
@@ -22,11 +23,13 @@ if cuda.is_available() and version.cuda:
             "kernels.cu",
         ],
         extra_compile_args = {
+            "cores": ["j"],
             "nvcc": ['-O3','--ptxas-options=-v',"--use_fast_math"]+all_cuda_archs, 
             "cxx": ['-O3']
         }
     )]
 elif cuda.is_available() and version.hip:
+    print("Run with AMD GPU")
     ext_modules = [CUDAExtension(
         name='curope',
         sources=[
@@ -34,10 +37,13 @@ elif cuda.is_available() and version.hip:
             "kernels.cu",
         ],
         extra_compile_args={
+            "cores": ["j"],
             "hipcc": ['-O3', '--ptxas-options=-v', "--use_fast_math"],
             "cxx": ['-O3']
         },
     )]
+else:
+    print("Run with CPU (unsupported)")
 
 setup(
     name='curope',
